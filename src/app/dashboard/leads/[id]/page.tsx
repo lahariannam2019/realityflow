@@ -41,6 +41,7 @@ import SalespersonAssigner from '@/components/dashboard/SalespersonAssigner';
 import FollowUpScheduler from '@/components/dashboard/FollowUpScheduler';
 import ContactActionModal from '@/components/dashboard/ContactActionModal';
 import ActivityTimeline from '@/components/dashboard/ActivityTimeline';
+import PropertyMatcher from '@/components/dashboard/PropertyMatcher';
 
 export default function LeadDetailPage() {
   const params = useParams();
@@ -589,6 +590,9 @@ export default function LeadDetailPage() {
               </div>
             </div>
           </div>
+
+          {/* AI Property Matcher */}
+          <PropertyMatcher analysis={analysis} properties={properties} />
         </div>
 
         {/* Right Column (5 cols): Contact Profile, Property Info & Activity Timeline */}

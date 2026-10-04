@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   fetchEnquiryById,
@@ -63,6 +64,34 @@ export async function PATCH(
           { status: 400 }
         );
       }
+
+      // Pipeline Transition Validations
+      const targetStatus = body.status.toUpperCase();
+      
+      if (targetStatus === 'SITE_VISIT_COMPLETED') {
+        const hasVisits = currentEnquiry.visits && currentEnquiry.visits.length > 0;
+        if (!hasVisits) {
+          return NextResponse.json(
+            { success: false, error: 'Cannot mark as Site Visit Completed without scheduling a site visit first.' },
+            { status: 400 }
+          );
+        }
+      }
+
+      if (targetStatus === 'WON' && !body.deal_value) {
+        return NextResponse.json(
+          { success: false, error: 'Deal value is required to mark a lead as WON.' },
+          { status: 400 }
+        );
+      }
+
+      if (targetStatus === 'LOST' && !body.lost_reason) {
+        return NextResponse.json(
+          { success: false, error: 'Lost reason is required to mark a lead as LOST.' },
+          { status: 400 }
+        );
+      }
+
       currentEnquiry = await updateCRMLeadStatus(id, body.status, {
         lost_reason: body.lost_reason,
         deal_value: body.deal_value !== undefined ? Number(body.deal_value) : undefined,

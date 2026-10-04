@@ -44,7 +44,21 @@ export type EnquiryStatus =
   | 'not_interested'
   | 'closed';
 
-export type EnquirySource = 'property_page' | 'contact_form' | 'direct' | 'website';
+export type EnquirySource = 
+  | 'Website'
+  | 'WhatsApp'
+  | 'Instagram'
+  | 'Facebook'
+  | 'Google Ads'
+  | '99acres'
+  | 'MagicBricks'
+  | 'Referral'
+  | 'Walk-in'
+  | 'Manual'
+  | 'property_page'
+  | 'contact_form'
+  | 'direct'
+  | 'website';
 export type PriorityClassification = 'HIGH' | 'MEDIUM' | 'LOW';
 
 export interface StaffProfile {

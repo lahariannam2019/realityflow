@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchProperties, saveProperty } from '@/lib/db/repository';
 import { PropertyFilterParams, PropertyType, PropertyStatus, PropertyAvailability } from '@/lib/types';

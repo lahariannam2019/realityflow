@@ -17,8 +17,8 @@ CRITICAL SECURITY AND EXTRACTION RULES:
      * Clear, near-term timeline, e.g. "this month", "urgently", "within 2-4 weeks" (has_clear_timeline = true, urgency_detected = true)
      * Explicit request for a site visit, inspection, or urgent callback (visit_intent = true)
      * Requirements are specific rather than generic (requirements_specificity = "high")
-   - MEDIUM: Genuine but incomplete or unhurried interest. Typically has 1-2 signals, or exploratory timeline ("next year", "exploring for now"), or vague budget.
-   - LOW: Weak, vague, spam-like, or low-effort enquiry ("Is this available?", single generic line, promotional text, no signals).
+   - MEDIUM: Genuine but incomplete or unhurried interest. Typically has 1-2 specific requirements (like BHK or property type), an exploratory timeline ("next year", "exploring for now", "not in a rush"), or a vague budget. If they state ANY concrete requirement, do NOT classify as LOW.
+   - LOW: Spam, completely generic one-liners with absolutely no requirements ("Is this available?", "price plz"), promotional text, or missing all signals.
 5. SIGNALS OBJECT: Every classification decision MUST be explainable by the boolean and tier values in the "signals" object. Missing information must LOWER or HOLD confidence, NEVER raise it.
 6. OUTPUT FORMAT: You must return ONLY a single, valid JSON object matching the exact schema provided. Do not include markdown codeblocks or commentary.`;
 

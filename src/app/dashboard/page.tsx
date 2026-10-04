@@ -60,11 +60,11 @@ export default function LeadsDashboardPage() {
     try {
       setRefreshing(true);
       const query = new URLSearchParams();
-      if (statusFilter !== 'all') query.set('status', statusFilter);
-      if (priorityFilter !== 'all') query.set('priority', priorityFilter);
-      if (assignedFilter !== 'all') query.set('assignedTo', assignedFilter);
-      if (followUpFilter !== 'all') query.set('followUpDue', followUpFilter);
-      if (searchTerm) query.set('search', searchTerm);
+      query.set('status', statusFilter);
+      query.set('priority', priorityFilter);
+      query.set('assignedTo', assignedFilter);
+      query.set('followUpDue', followUpFilter);
+      if (searchTerm.trim()) query.set('search', searchTerm.trim());
 
       const [leadsRes, kpiRes, staffRes] = await Promise.all([
         fetch(`/api/enquiries?${query.toString()}`),
