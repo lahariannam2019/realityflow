@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
     };
 
     const enquiries = await fetchEnquiries(filters);
+    console.log(`[DIAGNOSTIC - GET /api/enquiries] Filters: ${JSON.stringify(filters)} | Count returned: ${enquiries.length}`);
     return NextResponse.json({ success: true, enquiries });
   } catch (error: any) {
     console.error('API Error in GET /api/enquiries:', error);

@@ -57,6 +57,8 @@ export default function LeadsDashboardPage() {
   const [followUpFilter, setFollowUpFilter] = useState<string>('all');
 
   const fetchLeadsAndKpis = async () => {
+    const reqId = Date.now();
+    console.log(`[DIAGNOSTIC - Dashboard] [ReqID: ${reqId}] fetchLeadsAndKpis started. statusFilter: ${statusFilter}`);
     try {
       setRefreshing(true);
       const query = new URLSearchParams();
@@ -67,14 +69,16 @@ export default function LeadsDashboardPage() {
       if (searchTerm.trim()) query.set('search', searchTerm.trim());
 
       const [leadsRes, kpiRes, staffRes] = await Promise.all([
-        fetch(`/api/enquiries?${query.toString()}`),
-        fetch('/api/dashboard/kpis'),
-        fetch('/api/staff'),
+        fetch(`/api/enquiries?${query.toString()}`, { cache: 'no-store' }),
+        fetch('/api/dashboard/kpis', { cache: 'no-store' }),
+        fetch('/api/staff', { cache: 'no-store' }),
       ]);
 
       const leadsData = await leadsRes.json();
       const kpiData = await kpiRes.json();
       const staffData = await staffRes.json();
+
+      console.log(`[DIAGNOSTIC - Dashboard] [ReqID: ${reqId}] fetchLeadsAndKpis complete. Leads returned: ${leadsData.enquiries?.length}. KPI Total: ${kpiData.kpis?.totalLeads}`);
 
       if (leadsData.success) setLeads(leadsData.enquiries || []);
       if (kpiData.success) setKpis(kpiData.kpis || null);
@@ -94,11 +98,20 @@ export default function LeadsDashboardPage() {
   // Real-time updates: prepend new enquiries and refresh KPI counts
   useRealtimeCRM({
     onNewEnquiry: (newEnq) => {
-      setLeads((prev) => [newEnq, ...prev.filter((l) => l.id !== newEnq.id)]);
-      fetch('/api/dashboard/kpis')
+      console.log(`[DIAGNOSTIC - Dashboard] onNewEnquiry event received for ID: ${newEnq.id}`);
+      setLeads((prev) => {
+        console.log(`[DIAGNOSTIC - Dashboard] leads state BEFORE applying onNewEnquiry: ${prev.length} leads. IDs: ${prev.map(l => l.id).join(', ')}`);
+        const next = [newEnq, ...prev.filter((l) => l.id !== newEnq.id)];
+        console.log(`[DIAGNOSTIC - Dashboard] leads state AFTER applying onNewEnquiry: ${next.length} leads.`);
+        return next;
+      });
+      fetch('/api/dashboard/kpis', { cache: 'no-store' })
         .then((res) => res.json())
         .then((data) => {
-          if (data.success) setKpis(data.kpis);
+          if (data.success) {
+            console.log(`[DIAGNOSTIC - Dashboard] onNewEnquiry KPI refetch: KPI Total is now ${data.kpis?.totalLeads}`);
+            setKpis(data.kpis);
+          }
         });
     },
     onAnalysisCompleted: (analysis) => {
@@ -107,7 +120,7 @@ export default function LeadsDashboardPage() {
           l.id === analysis.enquiry_id ? { ...l, lead_analysis: analysis } : l
         )
       );
-      fetch('/api/dashboard/kpis')
+      fetch('/api/dashboard/kpis', { cache: 'no-store' })
         .then((res) => res.json())
         .then((data) => {
           if (data.success) setKpis(data.kpis);
@@ -338,7 +351,7 @@ export default function LeadsDashboardPage() {
 
       {/* Leads Table */}
       <div className="bg-white rounded-3xl border border-stone-200 shadow-xs overflow-hidden">
-        {loading ? (
+        {loading || refreshing ? (
           <div className="py-20 text-center space-y-3">
             <RefreshCw className="w-6 h-6 animate-spin text-amber-600 mx-auto" />
             <p className="text-xs text-stone-500">Loading incoming leads...</p>
@@ -516,3 +529,6 @@ export default function LeadsDashboardPage() {
     </div>
   );
 }
+
+
+

@@ -8,9 +8,11 @@ export async function GET(request: NextRequest) {
     const staffId = searchParams.get('staff_id') || undefined;
 
     const kpis = await fetchDashboardKPIs(staffId);
+    console.log(`[DIAGNOSTIC - GET /api/dashboard/kpis] Total Leads KPI returned: ${kpis.totalLeads}`);
     return NextResponse.json({ success: true, kpis });
   } catch (error: any) {
     console.error('Error in GET /api/dashboard/kpis:', error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+
